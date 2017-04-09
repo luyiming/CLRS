@@ -49,7 +49,7 @@ int partition(int *A, int p, int r, int pivot) {
   return partition(A, p, r);
 }
 
-// 1 <= n <= 5
+// 0 <= n <= 5
 int findMedianOfFive(int *A, int n) {
   assert(0 <= n && n <= 5);
   sort(A, A + n);
