@@ -20,16 +20,17 @@ int partition(int *A, int p, int r) {
 }
 
 // k starts from 1, Expect O(n)
+// return index
 int selectRank(int *A, int left, int right, int k) {
   if (left > right) {
     return -1;
   }
   int mid = partition(A, left, right);
-  int leftNnum = mid - left + 1;
-  if (leftNnum == k) {
+  int leftNum = mid - left + 1;
+  if (leftNum == k) {
     return mid;
-  } else if (leftNnum < k) {
-    return selectRank(A, mid + 1, right, k - leftNnum);
+  } else if (leftNum < k) {
+    return selectRank(A, mid + 1, right, k - leftNum);
   } else {
     return selectRank(A, left, mid - 1, k);
   }
@@ -56,7 +57,6 @@ int findMedianOfFive(int *A, int n) {
 }
 
 int selectRank_2(int *A, int left, int right, int k) {
-  cout << "k: " << k << endl;
   if (left > right) {
     return -1;
   }
@@ -67,51 +67,52 @@ int selectRank_2(int *A, int left, int right, int k) {
     medianGoup[i] = findMedianOfFive(A + left + i * 5, groupSize);
   }
 
-  cout << "median group: ";
-  for (int i = 0; i < groupNum; i++) {
-    cout << medianGoup[i] << " ";
-  }
-  cout << endl;
-
-  cout << "after group: ";
-  for (int i = left; i <= right; i++) {
-    cout << A[i] << " ";
-  }
-  cout << endl;
-
   int pivot = selectRank(medianGoup, 0, groupNum - 1, (groupNum + 1) / 2);
-  cout << "pivot: " << pivot << " " << medianGoup[pivot] << endl;
   int mid = partition(A, left, right, medianGoup[pivot]);
-
-  cout << "mid: " << mid << " " << medianGoup[mid] << endl;
-
-  cout << "after partition: ";
-  for (int i = left; i <= right; i++) {
-    cout << A[i] << " ";
-  }
-  cout << endl;
 
   delete[] medianGoup;
 
-  int leftNnum = mid - left + 1;
-  if (leftNnum == k) {
+  int leftNum = mid - left + 1;
+  if (leftNum == k) {
     return mid;
-  } else if (leftNnum < k) {
-    return selectRank_2(A, mid + 1, right, k - leftNnum);
+  } else if (leftNum < k) {
+    return selectRank_2(A, mid + 1, right, k - leftNum);
   } else {
     return selectRank_2(A, left, mid - 1, k);
   }
 }
 /*****************************************************************************/
 
+#define TEST_NUM 10000
+#define ARRSIZE 100
 int main() {
-  int A[] = {2, 5, 3, 6, 4, 1};
-  for (int k = -1; k <= 7; k++) {
-    int index = selectRank_2(A, 0, sizeof(A) / sizeof(int) - 1, k);
-    if (index != -1) {
-      printf("rank %d: %d\n", k, A[index]);
-    } else {
-      printf("rank %d not exists\n", k);
+  int a[ARRSIZE];
+  int b[ARRSIZE];
+  int c[ARRSIZE];
+  for (int i = 0; i < TEST_NUM; i++) {
+    int arrSize = (rand() % ARRSIZE) + 1;
+    for (int j = 0; j < arrSize; j++) {
+      a[j] = b[j] = c[j] = rand();
+    }
+    sort(b, b + arrSize);
+    for (int j = 0; j < arrSize; j++) {
+      int index = selectRank_2(a, 0, arrSize - 1, j + 1);
+      if (b[j] != a[index]) {
+        cout << "array size: " << arrSize << endl;
+        cout << "array: ";
+        for (int k = 0; k < arrSize; k++) {
+          cout << c[k] << " ";
+        }
+        cout << endl;
+
+        cout << "select rank: " << j + 1 << endl;
+
+        cout << "expect result: " << b[j] << endl;
+
+        cout << "my result: " << index << " -> " << a[index] << endl;
+        return -1;
+      }
     }
   }
+  cout << "test succeed" << endl;
 }
